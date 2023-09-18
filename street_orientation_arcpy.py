@@ -64,8 +64,7 @@ output_folder = r'Line_Bearings'
 
 # Create Final Output Layer
 line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
-arcpy.management.MakeFeatureLayer(zones, line_bearing_output)
-
+arcpy.management.CopyFeatures(zones, line_bearing_output)
 
 # Clip Streets to each Zone
 with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
@@ -166,7 +165,7 @@ for root, directories, files in os.walk(clipped_streets_output):
             finally:
                 arcpy.AddMessage("On to the next step!")
 # Create Polar Histogram
-output_gdf = gpd.read_file(line_bearing_output)
+output_gdf = gpd.read_file(os.path.join(original_workspace, line_bearing_output))
 for index, row in output_gdf.iterrows():
     counter = 1
     radii = []
