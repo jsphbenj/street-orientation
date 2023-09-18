@@ -68,7 +68,7 @@ def mp_handler():
     # Create Final Output Layer
     line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
     arcpy.management.CopyFeatures(zones, line_bearing_output)
-
+    r"""
     try:
         # Clip Streets to each Zone
         with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
@@ -156,7 +156,7 @@ def mp_handler():
         # Capture all other errors
         arcpy.AddError(str(e))
         print("Exception:", e)
-
+    """
     # Create Polar Histogram
     output_gdf = gpd.read_file(os.path.join(original_workspace, line_bearing_output))
     for index, row in output_gdf.iterrows():
@@ -192,8 +192,9 @@ def mp_handler():
             )
         )
 
-        file_name = original_workspace + output_folder + '_p_hist_' + output_gdf[zone_name_field][index].replace(' ', '_') + '.png'
-        pio.write_image(fig, file_name)
+        file_name = output_gdf[zone_name_field][index].replace(' ', '_') + '_p_hist.png'
+        file_loc = os.path.join(original_workspace, output_folder, file_name)
+        pio.write_image(fig, file_loc)
         print('File Created:' + output_gdf[zone_name_field][index])
 
 
