@@ -10,7 +10,6 @@ from mp_worker import worker
 
 start_time = time.time()
 
-arcpy.CheckOutExtension("3D")
 arcpy.env.overwriteOutput = True
 
 
@@ -43,32 +42,20 @@ def line_bearing(roads_shp):
 
 
 def mp_handler():
-    # Set the working directory to the correct folder
-    original_workspace = r'C:\Users\joseph.benjamin\OneDrive - University of Florida\GIS\street_network\Lesson1_Assignment'
-    # arcpy.env.workspace = arcpy.GetParametersAsText(0)
-    arcpy.env.workspace = original_workspace
-
     # Read the shapefiles
-    zones = r'Zones_FC\Elem_Zones_NAD.shp'
-    # zones = arcpy.GetParametersAsText(1)
+    zones = arcpy.GetParameterAsText(0)
 
-    zone_name_field = 'code_elem'
-    # The field to be used as the name for each zone
-    # zone_name = arcpy.GetParametersAsText(2)
+    zone_name_field = arcpy.GetParameterAsText(1)
 
-    streets = r'GNV_Roads_FC\rciroads_jul23\rciroads_jul23.shp'
-    # streets = arcpy.GetParametersAsText(3)
+    streets = arcpy.GetParameterAsText(2)
 
-    clipped_streets_output = os.path.join(arcpy.env.workspace, r'Clipped_Streets')
-    # clipped_streets_output = arcpy.GetParametersAsText(4)
+    # Create Output Folders
+    output_folder = arcpy.GetParameterAsText(3)
+    clipped_streets_output = os.path.join(output_folder, r'Clipped_Streets')
 
-    output_folder = r'Line_Bearings'
-    # output_folder = arcpy.GetParametersAsText(5)
-
-    # Create Final Output Layer
     line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
     arcpy.management.CopyFeatures(zones, line_bearing_output)
-    r"""
+
     try:
         # Clip Streets to each Zone
         with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
@@ -77,13 +64,13 @@ def mp_handler():
                     # New Feature Layer for each Zone
                     zone_name = str(row[1])
                     single_zone_output = f'memory\\{zone_name}'
-                    single_zone_where_clause = zone_name_field + f" = '{zone_name}'"
+                    single_zone_where_clause = f"{zone_name_field} = '{zone_name}'"
                     arcpy.management.MakeFeatureLayer(zones, single_zone_output, single_zone_where_clause)
 
                     # Clip Streets to that Feature Layer
                     arcpy.analysis.Clip(streets, single_zone_output,
-                                        clipped_streets_output + r'\Clipped_Streets_' + zone_name +
-                                        r'.shp')
+                                        os.path.join(clipped_streets_output, r'Clipped_Streets_' + zone_name + r'.shp'))
+                    # todo I think what i'll have to do here is fully CREATE a new folder within the output folder
 
                     # Delete Zone Feature Layer from Memory
                     arcpy.management.Delete(single_zone_output)
@@ -156,7 +143,7 @@ def mp_handler():
         # Capture all other errors
         arcpy.AddError(str(e))
         print("Exception:", e)
-    """
+
     # Create Polar Histogram
     output_gdf = gpd.read_file(os.path.join(original_workspace, line_bearing_output))
     for index, row in output_gdf.iterrows():
@@ -193,7 +180,7 @@ def mp_handler():
         )
 
         file_name = output_gdf[zone_name_field][index].replace(' ', '_') + '_p_hist.png'
-        file_loc = os.path.join(original_workspace, output_folder, file_name)
+        file_loc = os.path.join(output_folder, 'polar_histograms', file_name)
         pio.write_image(fig, file_loc)
         print('File Created:' + output_gdf[zone_name_field][index])
 
