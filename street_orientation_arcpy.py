@@ -41,7 +41,7 @@ def line_bearing(roads_shp):
 
 
 # Set the working directory to the correct folder
-original_workspace = r'C:\Users\joseph.benjamin\OneDrive - University of Florida\GIS\street_network\Lesson1_Assignment'
+original_workspace = r'sample_data'
 # arcpy.env.workspace = arcpy.GetParametersAsText(0)
 arcpy.env.workspace = original_workspace
 
