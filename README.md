@@ -35,3 +35,6 @@ Either download and run the arcpy, hardcoding the input variables, or use the Ar
 Ensure that the bin_key.csv is in the local drive to correctly run. 
 
 ## Testing
+1. Download sample_data.zip and extract the folders. This contains the two shapefiles required to run the script: the zones and streets shapefiles. 
+2. Set the working directory to the correct location locally (line 44).
+3. Run the script and find your outputs in the output folder (line 62)!
