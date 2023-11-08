@@ -3,7 +3,7 @@
 This python script and ArcGIS Pro script tool takes the line bearing of every street and visualizes the proportion going in certain directions via a polar histogram and shapefile outputs. This is applicable for analyzing street network orientations. A city with a perfectgridiron street form will be represented by a polar histogram with a cross shape (all streets go in one of two directional pairs). The opposite, a city with streets' endpoints' bearing going in all different directions would be represented by a polar histogram with bars creating a rounder shape. The closer to a circular form the polar histogram's bars are, the close the city is to equal proportions of streets going in every direction. 
 
 ## How it Works
-x
+Make sure the following modules are installed: arcpy, geopandas, plotly.
 
 ### Parameters
 The format is as follows:
