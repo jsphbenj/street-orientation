@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e7cfbe7-3cf4-4a61-b45b-1d79c471dba5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mp_worker.py" beforeDir="false" afterPath="$PROJECT_DIR$/mp_worker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/street_orientation_multiprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/street_orientation_multiprocessing.py" afterDir="false" />
-    </list>
+    <list default="true" id="5e7cfbe7-3cf4-4a61-b45b-1d79c471dba5" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,6 +32,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
@@ -98,16 +95,6 @@
           <url>file://$PROJECT_DIR$/street_orientation_multiprocessing.py</url>
           <line>134</line>
           <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/street_orientation_arcpy.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/street_orientation_arcpy.py</url>
-          <line>69</line>
-          <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/street_orientation_multiprocessing.py</url>
