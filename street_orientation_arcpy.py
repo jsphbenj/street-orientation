@@ -1,4 +1,4 @@
-# Created 11 July 2023 by Joseph Benjamin
+# Created by Joseph Benjamin
 
 import os, csv, time
 import arcpy
@@ -39,9 +39,8 @@ def line_bearing(roads_shp):
     arcpy.management.CalculateField(roads_shp, 'fwd_bear', 'bearing_fixer(!fwd_bear!)', "PYTHON3", bearing_fixer)
     print(arcpy.AddMessage("Forward Bearing Calculated."))
 
-
 # Set the working directory to the correct folder
-original_workspace = r'sample_data'
+original_workspace = r'C:\Users\Public\Documents\sample_data\sample_data'
 # arcpy.env.workspace = arcpy.GetParametersAsText(0)
 arcpy.env.workspace = original_workspace
 
@@ -56,11 +55,14 @@ zone_name_field = 'code_elem'
 streets = r'GNV_Roads_FC\rciroads_jul23\rciroads_jul23.shp'
 # streets = arcpy.GetParametersAsText(3)
 
-clipped_streets_output = os.path.join(arcpy.env.workspace, r'Clipped_Streets')
-# clipped_streets_output = arcpy.GetParametersAsText(4)
 
-output_folder = r'Line_Bearings'
+output_folder = os.path.join(arcpy.env.workspace, r'Line_Bearings')
+if not os.path.exists(output_folder):
+    os.mkdir(output_folder)
 # output_folder = arcpy.GetParametersAsText(5)
+
+clipped_streets_output = os.path.join(output_folder, r'Clipped_Streets')
+# clipped_streets_output = arcpy.GetParametersAsText(4)
 
 # Create Final Output Layer
 line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
@@ -73,10 +75,12 @@ with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
             # New Feature Layer for each Zone
             zone_name = str(row[1])
             single_zone_output = f'memory\\{zone_name}'
-            single_zone_where_clause = zone_name_field + f" = '{zone_name}'"
+            single_zone_where_clause = f"{zone_name_field} = '{zone_name}'"
             arcpy.management.MakeFeatureLayer(zones, single_zone_output, single_zone_where_clause)
 
             # Clip Streets to that Feature Layer
+            if not os.path.exists(clipped_streets_output):
+                os.makedirs(clipped_streets_output)
             arcpy.analysis.Clip(streets, single_zone_output, clipped_streets_output + r'\Clipped_Streets_' + zone_name +
                                 r'.shp')
 
@@ -92,10 +96,10 @@ with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
 
 # Calculate Line Bearings
 for root, directories, files in os.walk(clipped_streets_output):
-        for file in files:
-            if file.endswith('.shp'):
-                line_bearing(os.path.join(clipped_streets_output, file))
-                print(f'{file}: Line bearings calculated!')
+    for file in files:
+        if file.endswith('.shp'):
+            line_bearing(os.path.join(clipped_streets_output, file))
+            print(f'{file}: Line bearings calculated!')
 
 # Takes the key csv and reads it into a dictionary with the bin name, degree range, and the bearings that fall into
 # that classification

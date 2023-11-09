@@ -45,17 +45,17 @@ def line_bearing(roads_shp):
 
 def mp_handler():
     # Read the shapefiles
-    # = r"C:\Users\joseph.benjamin\OneDrive - University of Florida\GIS\street_network\Lesson1_Assignment\Zones_FC\Elem_Zones_NAD.shp"
+    # = r""
     zones = arcpy.GetParameterAsText(0)
 
     # zone_name_field = "code_elem"
     zone_name_field = arcpy.GetParameterAsText(1)
 
-    # streets = r"C:\Users\joseph.benjamin\OneDrive - University of Florida\GIS\street_network\Lesson1_Assignment\GNV_Roads_FC\rciroads_jul23\rciroads_jul23.shp"
+    # streets = r""
     streets = arcpy.GetParameterAsText(2)
 
     # Create Output Folders
-    # output_folder = r"C:\Users\joseph.benjamin\Documents\GeoPlan\GEOG489\Lesson1\L1_Proj\TEST1"
+    # output_folder = r""
     output_folder = arcpy.GetParameterAsText(3)
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
