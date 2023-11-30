@@ -45,8 +45,10 @@ original_workspace = r'C:\Users\Public\Documents\sample_data\sample_data'
 arcpy.env.workspace = original_workspace
 
 # Read the shapefiles
-zones = r'Zones_FC\Elem_Zones_NAD.shp'
+zones = r'Zones_FC\Elem_Zones_Simplified.shp'
 # zones = arcpy.GetParametersAsText(1)
+#todo redo the zones sample file
+
 
 zone_name_field = 'code_elem'
 # The field to be used as the name for each zone
@@ -84,12 +86,9 @@ with arcpy.da.SearchCursor(zones, ['SHAPE@', zone_name_field]) as cursor:
             arcpy.analysis.Clip(streets, single_zone_output, clipped_streets_output + r'\Clipped_Streets_' + zone_name +
                                 r'.shp')
 
-            # Delete Zone Feature Layer from Memory
-            arcpy.management.Delete(single_zone_output)
-
             # Add message indicating success
             print(arcpy.AddMessage("Zone: " + zone_name + "Streets Clipped Successfully."))
-
+            #todo why does it print 'None' after??? (same w line 102)
         except:
             # Add message indicating failure
             print(arcpy.AddError("Zone: " + zone_name + "Streets NOT Clipped Successfully."))
@@ -99,6 +98,9 @@ for root, directories, files in os.walk(clipped_streets_output):
     for file in files:
         if file.endswith('.shp'):
             line_bearing(os.path.join(clipped_streets_output, file))
+
+            # Delete Zone Feature Layer
+            arcpy.management.Delete(single_zone_output)
             print(f'{file}: Line bearings calculated!')
 
 # Takes the key csv and reads it into a dictionary with the bin name, degree range, and the bearings that fall into
