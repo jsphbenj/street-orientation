@@ -2,15 +2,21 @@ import arcpy
 import csv
 import os
 
-
-def worker(file, zone_name_field, line_bearing_output):
-    r"""zone_name_field = arcpy.GetParameterAsText(1)
-    output_folder = arcpy.GetParameterAsText(3)
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)"""
+def worker(file):
     try:
         bins_dict = {}
-        bin_key = r'bin_key.csv'
+        bin_key = r'C:\Users\Public\Documents\sample_data\sample_data\bin_key.csv'
+        zone_name_field = 'code_elem'
+        output_folder = 'C:\\Users\\Public\\Documents\\sample_data\\sample_data\\Line_Bearings'
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
+        line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
+        if not os.path.exists(line_bearing_output):
+            arcpy.CreateFeatureclass_management(output_folder, line_bearing_output)
+
+        # Takes the key csv and reads it into a dictionary with the bin name, degree range, and the bearings
+        # that fall into that classification
 
         with open(bin_key, 'r') as csvfile:
             reader = csv.reader(csvfile)
@@ -46,13 +52,8 @@ def worker(file, zone_name_field, line_bearing_output):
             selection_count = int(arcpy.management.GetCount(selection).getOutput(0))
             bins_dict[key][2] = selection_count
 
-        # Create New Field in the Output Shapefile
+        # Create New Fields in the Output Shapefile
         bin_field_list = ['St_Bin_' + str(x) for x in range(1, 37)]
-
-        add_bin_fields_list = [[field, 'DOUBLE'] for field in bin_field_list]
-        add_bin_fields_list.append(['Total', 'DOUBLE'])
-
-        arcpy.management.AddFields(line_bearing_output, add_bin_fields_list)
 
         where_clause = f"{zone_name_field} = '{zone_name}'"
         cursor_fields = bin_field_list + ['Total']

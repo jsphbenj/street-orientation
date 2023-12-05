@@ -45,22 +45,32 @@ def line_bearing(roads_shp):
 
 def mp_handler():
     # Read the shapefiles
-    # = r""
-    zones = arcpy.GetParameterAsText(0)
+    # Set the working directory to the correct folder
+    original_workspace = r'C:\Users\Public\Documents\sample_data\sample_data'
+    # arcpy.env.workspace = arcpy.GetParametersAsText(0)
+    arcpy.env.workspace = original_workspace
 
-    # zone_name_field = "code_elem"
-    zone_name_field = arcpy.GetParameterAsText(1)
+    # Read the shapefiles
+    zones = r'Zones_FC\Elem_Zones_Simplified.shp'
+    # zones = arcpy.GetParametersAsText(1)
+    # todo redo the zones sample file
 
-    # streets = r""
-    streets = arcpy.GetParameterAsText(2)
+    zone_name_field = 'code_elem'
+    # The field to be used as the name for each zone
+    # zone_name = arcpy.GetParametersAsText(2)
 
-    # Create Output Folders
-    # output_folder = r""
-    output_folder = arcpy.GetParameterAsText(3)
+    streets = r'GNV_Roads_FC\rciroads_jul23\rciroads_jul23.shp'
+    # streets = arcpy.GetParametersAsText(3)
+
+    output_folder = os.path.join(arcpy.env.workspace, r'Line_Bearings')
     if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-    clipped_streets_output = os.path.join(output_folder, r'Clipped_Streets')
+        os.mkdir(output_folder)
+    # output_folder = arcpy.GetParametersAsText(5)
 
+    clipped_streets_output = os.path.join(output_folder, r'Clipped_Streets')
+    # clipped_streets_output = arcpy.GetParametersAsText(4)
+
+    # Create Final Output Layer
     line_bearing_output = os.path.join(output_folder, 'line_bearing_output.shp')
     arcpy.management.CopyFeatures(zones, line_bearing_output)
 
@@ -81,9 +91,6 @@ def mp_handler():
                     arcpy.analysis.Clip(streets, single_zone_output,
                                         os.path.join(clipped_streets_output, r'Clipped_Streets_' + zone_name + r'.shp'))
 
-                    # Delete Zone Feature Layer from Memory
-                    arcpy.management.Delete(single_zone_output)
-
                     # Add message indicating success
                     print(arcpy.AddMessage("Zone: " + zone_name + " Streets Clipped Successfully."))
 
@@ -96,10 +103,18 @@ def mp_handler():
             for file in files:
                 if file.endswith('.shp'):
                     line_bearing(os.path.join(clipped_streets_output, file))
+
+                    # Delete Zone Feature Layer from Memory
+                    arcpy.management.Delete(single_zone_output)
                     print(f'{file}: Line bearings calculated!')
 
-        # Takes the key csv and reads it into a dictionary with the bin name, degree range, and the bearings
-        # that fall into that classification
+        # Create New Field in the Output Shapefile
+        bin_field_list = ['St_Bin_' + str(x) for x in range(1, 37)]
+
+        add_bin_fields_list = [[field, 'DOUBLE'] for field in bin_field_list]
+        add_bin_fields_list.append(['Total', 'DOUBLE'])
+
+        arcpy.management.AddFields(line_bearing_output, add_bin_fields_list)
 
         # Calculate Bins for Each Clipped_Streets Shapefile Using Multiprocessing
         print("")
@@ -111,8 +126,9 @@ def mp_handler():
         for root, directories, files in os.walk(clipped_streets_output):
             for file in files:
                 if file.endswith('.shp'):
-                    jobs.append(file)
-        jobs = [(x, str(zone_name_field), str(line_bearing_output)) for x in jobs]
+                    full_path = os.path.join(root, file)
+                    jobs.append(full_path)
+        # jobs = [(x, str(zone_name_field), str(line_bearing_output)) for x in jobs]
 
         arcpy.AddMessage("Job list has " + str(len(jobs)) + " elements.")
 
@@ -124,7 +140,7 @@ def mp_handler():
         print("there are: " + str(cpu_num) + " cpu cores on this machine")
 
         with multiprocessing.Pool(processes=cpu_num) as pool:
-            res = pool.starmap(worker, jobs)
+            res = pool.map(worker, jobs)
 
         failed = res.count(False)  # count how many times False appears in the list with the return values
         if failed > 0:
