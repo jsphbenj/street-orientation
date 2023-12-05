@@ -5,9 +5,9 @@ import os
 def worker(file):
     try:
         bins_dict = {}
-        bin_key = r'C:\Users\Public\Documents\sample_data\sample_data\bin_key.csv'
-        zone_name_field = 'code_elem'
-        output_folder = 'C:\\Users\\Public\\Documents\\sample_data\\sample_data\\Line_Bearings'
+        bin_key = r'C:\Users\Public\Documents\st_orientation_sample_data\bin_key.csv'
+        zone_name_field = 'NAME'
+        output_folder = r'C:\Users\Public\Documents\st_orientation_sample_data\Line_Bearings'
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
@@ -53,6 +53,7 @@ def worker(file):
             bins_dict[key][2] = selection_count
 
         # Create New Fields in the Output Shapefile
+        #todo add in HO and PHI (entropy indicator)
         bin_field_list = ['St_Bin_' + str(x) for x in range(1, 37)]
 
         where_clause = f"{zone_name_field} = '{zone_name}'"

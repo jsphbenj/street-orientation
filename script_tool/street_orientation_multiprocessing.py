@@ -45,21 +45,19 @@ def line_bearing(roads_shp):
 
 def mp_handler():
     # Read the shapefiles
-    # Set the working directory to the correct folder
-    original_workspace = r'C:\Users\Public\Documents\sample_data\sample_data'
+    original_workspace = r'C:\Users\Public\Documents\st_orientation_sample_data'
     # arcpy.env.workspace = arcpy.GetParametersAsText(0)
     arcpy.env.workspace = original_workspace
 
     # Read the shapefiles
-    zones = r'Zones_FC\Elem_Zones_Simplified.shp'
+    zones = r'Zones\Tampa_Planning_Districts.shp'
     # zones = arcpy.GetParametersAsText(1)
-    # todo redo the zones sample file
 
-    zone_name_field = 'code_elem'
+    zone_name_field = 'NAME'
     # The field to be used as the name for each zone
     # zone_name = arcpy.GetParametersAsText(2)
 
-    streets = r'GNV_Roads_FC\rciroads_jul23\rciroads_jul23.shp'
+    streets = r'Streets\Road_Centerline.shp'
     # streets = arcpy.GetParametersAsText(3)
 
     output_folder = os.path.join(arcpy.env.workspace, r'Line_Bearings')
